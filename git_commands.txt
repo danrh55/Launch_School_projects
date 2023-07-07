@@ -25,5 +25,6 @@ git checkout newBranchName (changes branch)
 
 git commit -m "message flag"
 
-git push u origin(name of github) main (main branch)
-
+git push -u origin(alias for remote repo, usually githubgi) main (main branch)
+# tells us all the remote repos local knows about
+git remote 
