@@ -1,0 +1,35 @@
+welcome_message: Welcome to the calculator. What should I call you?
+invalid_input: That's an invalid input. Please try again.
+operation_message: | 
+                    What operation would you like to perform? 
+                    1. Addition
+                    2. Substraction
+                    3. Multiplication
+                    4. Division
+operation_options:
+    '1': '+'
+    add: '+'
+    '2': '-'
+    minus: '-'
+    subtract: '-'
+    '3': '*'
+    multiply: '*'
+    multiplication: '*'
+    '4': '/'
+    divide: '/'
+    division: '/'    
+
+calc_again?: Do you want to do another calculation?
+thank_you_msg: Thank you for using the calculator. See you again later!                  
+    
+
+
+
+
+
+
+
+
+
+
+
