@@ -61,7 +61,7 @@ loop do
   loop do
     prompt(message['operation_message'])
     operation = gets.chomp.downcase
-    answer = calculate(num1.to_f, num2.to_f, operation)
+    answer = calculate(num1.to_f, num2.to_f, operation).round(2)
     if answer == false
       prompt(message['invalid_input'])
     else
@@ -69,7 +69,7 @@ loop do
     end
   end
 
-  puts "#{num1} #{message['operation_options'][operation]} #{num2} calculates to: #{answer.round(2)}"
+  puts "#{num1} #{message['operation_options'][operation]} #{num2} calculates to: #{answer}"
   
   go_again_answer = ''
   loop do
