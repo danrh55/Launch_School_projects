@@ -1,25 +1,52 @@
 welcome_message: Welcome to the calculator. What should I call you?
+
+operation_message:
+
+input_messages:
+  - What's your first number?
+  - What's your second number?
+  - What operation would you like to perform? 
+    1. Addition
+    2. Substraction
+    3. Multiplication
+    4. Division
+
 invalid_input: That's an invalid input. Please try again.
-operation_message: | 
-                    What operation would you like to perform? 
-                    1. Addition
-                    2. Substraction
-                    3. Multiplication
-                    4. Division
-operation_options:
-    '1': '+'
-    add: '+'
-    '2': '-'
-    minus: '-'
-    subtract: '-'
-    '3': '*'
-    multiply: '*'
+divide_by_zero_msg: You cannot divide by a zero. Please re-enter your numbers
+
+operation_variations: 
+  addition: 
+    - '1'
+    - add
+    - addition
+  subtraction: 
+    - '2'
+    - minus
+    - subtract
+    - subtraction
+  multiplication:
+    - '3'
+    - multiply
+    - multiplication
+  division:
+    - '4'
+    - divide
+    - division
+   
+operation_symbols:
+    addition: '+'
+    subtraction: '-'
     multiplication: '*'
-    '4': '/'
-    divide: '/'
     division: '/'    
 
 calc_again?: Do you want to do another calculation?
+
+valid_answers:
+  - 'y'
+  - 'yes'
+  - 'n'
+  - 'no'
+             
 thank_you_msg: Thank you for using the calculator. See you again later!                  
     
 
