@@ -26,12 +26,12 @@ end
 
 def grab_inputs
   inputs = { principal: '', apr: '', loan_duration: '' }
-  input_msgs = ['loan amount', 'annual APR (in % form)', 'loan duration in months']
+  input_msgs = ['loan amount', 'annual APR (in % form)', 'loan duration (in months)']
   input_counter = 0
-
+  
   input_msgs.each do |input_msg|
     puts "Please enter in your #{input_msg}"
-    loop do 
+    loop do
       input = gets.chomp.strip
       if valid_input?(input)
         inputs.store(inputs.keys[input_counter], input.to_f)
