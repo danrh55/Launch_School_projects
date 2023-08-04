@@ -34,7 +34,7 @@ def grab_inputs
     loop do 
       input = gets.chomp.strip
       if valid_input?(input)
-        inputs[inputs.keys[input_counter]] = input.to_f
+        inputs.store(inputs.keys[input_counter], input.to_f)
         break
       else
         puts "Invalid input. Please enter your #{input_msg} again."
