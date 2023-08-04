@@ -24,46 +24,25 @@ def calculate_again?
   end
 end
 
-def grab_principal
-  principal = ''
-  loop do
-    puts 'Please enter in your loan amount'
-    principal = gets.chomp.strip
-    if valid_input?(principal)
-      break
-    else
-      puts 'Invalid input. Please enter your loan amount again.'
-    end
-  end
-  principal.to_f.round(2)
-end
+def grab_inputs
+  inputs = { principal: '', apr: '', loan_duration: '' }
+  input_msgs = ['loan amount', 'annual APR (in % form)', 'loan duration in months']
+  input_counter = 0
 
-def grab_apr_rate
-  apr = ''
-  loop do
-    puts 'Please enter in your annual APR (in % form)'
-    apr = gets.chomp.strip
-    if valid_input?(apr)
-      break
-    else
-      puts 'Invalid input. Please enter your annual APR (in % form) again.'
+  input_msgs.each do |input_msg|
+    puts "Please enter in your #{input_msg}"
+    loop do 
+      input = gets.chomp.strip
+      if valid_input?(input)
+        inputs[inputs.keys[input_counter]] = input.to_f
+        break
+      else
+        puts "Invalid input. Please enter your #{input_msg} again."
+      end
     end
+    input_counter += 1
   end
-  apr.to_f
-end
-
-def grab_loan_duration
-  loan_duration = ''
-  loop do
-    puts 'Please enter in your loan duration in months'
-    loan_duration = gets.chomp.strip
-    if valid_input?(loan_duration)
-      break
-    else
-      puts 'Invalid input. Please enter your loan duration (in months) again.'
-    end
-  end
-  loan_duration.to_i
+  inputs
 end
 
 def valid_input?(input)
@@ -93,11 +72,7 @@ end
 welcome_msgs
 
 loop do
-  inputs = { principal: '', apr: '', loan_duration: '' }
-
-  inputs[:principal] = grab_principal
-  inputs[:apr] = grab_apr_rate
-  inputs[:loan_duration] = grab_loan_duration
+  inputs = grab_inputs
 
   monthly_interest_rate = to_monthly_interest_rate(inputs)
   monthly_payment = calc_monthly_payment(inputs, monthly_interest_rate).round(2)
