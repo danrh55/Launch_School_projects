@@ -1,11 +1,21 @@
+# import dependencies
+require 'yaml'
+
 # method definitions
-def welcome_msgs
+def welcome_message
   puts 'Welcome to the mortgage calculator. What\'s your name?'
   puts "Welcome #{grab_name}!"
 end
 
 def grab_name
-  gets.chomp.strip.capitalize
+  loop do
+    name = gets.chomp.strip.capitalize
+    if name == ''
+      puts 'You forgot to enter your name! What\'s your name'
+    else
+      return name
+    end
+  end
 end
 
 def calculate_again?
@@ -25,59 +35,71 @@ def calculate_again?
 end
 
 def grab_inputs
-  inputs = { principal: '', apr: '', loan_duration: '' }
-  input_msgs = ['loan amount', 'annual APR (in % form)', 'loan duration (in months)']
   input_counter = 0
-  
-  input_msgs.each do |input_msg|
-    puts "Please enter in your #{input_msg}"
+
+  INPUTS_DATA[:input_prompts].each do |input_prompt|
+    current_type = INPUTS_DATA[:input_types].keys[input_counter]
+    puts "Please enter in your #{input_prompt}"
     loop do
       input = gets.chomp.strip
       if valid_input?(input)
-        inputs.store(inputs.keys[input_counter], input.to_f)
+        INPUTS_DATA[:input_types][current_type] = input.to_f
         break
       else
-        puts "Invalid input. Please enter your #{input_msg} again."
+        puts "Please enter your #{input_prompt}."
       end
     end
     input_counter += 1
   end
-  inputs
 end
 
 def valid_input?(input)
-  (input =~ /\D/).nil?
+  if input == ''
+    puts 'You forgot to enter in a value!'
+    false
+  elsif (input =~ /\D/).nil? != true
+    puts 'invalid input'
+    false
+  else
+    true
+  end
 end
 
-def to_monthly_interest_rate(inputs)
-  (((1 + ((inputs[:apr] / 100)))**(1.0 / 12)) - 1)
+def to_monthly_interest_rate
+  apr = INPUTS_DATA[:input_types][:apr]
+  (((1 + ((apr / 100)))**(1.0 / NUM_MONTHS_IN_YEAR)) - 1)
 end
 
-def calc_monthly_payment(inputs, monthly_rate)
-  formula = (1 + monthly_rate)**(-inputs[:loan_duration])
-  inputs[:principal] * (monthly_rate / (1 - (formula)))
+def calc_monthly_payment(monthly_rate)
+  loan_duration_years = INPUTS_DATA[:input_types][:loan_duration_years]
+  loan_duration_months = loan_duration_years * NUM_MONTHS_IN_YEAR
+  formula = (1 + monthly_rate)**(-(loan_duration_months))
+  INPUTS_DATA[:input_types][:principal] * (monthly_rate / (1 - (formula)))
 end
 
-def output_msg(inputs, monthly_payment)
+def output_message(monthly_payment)
   <<~OUTPUT
   \n=> Your monthly mortgage payment: $#{monthly_payment}\n
   Your loan conditions:\n
-  loan amount: $#{inputs[:principal]}
-  APR: #{inputs[:apr]} %
-  loan duration: #{inputs[:loan_duration]} months
+  loan amount: $#{INPUTS_DATA[:input_types][:principal]}
+  APR: #{INPUTS_DATA[:input_types][:apr]} %
+  loan duration: #{INPUTS_DATA[:input_types][:loan_duration]} years
   OUTPUT
 end
 
 # main
-welcome_msgs
+INPUTS_DATA = YAML.load_file('inputs.yml')
+NUM_MONTHS_IN_YEAR = 12.0
+
+welcome_message
 
 loop do
-  inputs = grab_inputs
+  grab_inputs
 
-  monthly_interest_rate = to_monthly_interest_rate(inputs)
-  monthly_payment = calc_monthly_payment(inputs, monthly_interest_rate).round(2)
+  monthly_interest_rate = to_monthly_interest_rate
+  monthly_payment = calc_monthly_payment(monthly_interest_rate).round(2)
 
-  puts output_msg(inputs, monthly_payment)
+  puts output_message(format('%.2f', monthly_payment))
 
   break unless calculate_again?
 end
