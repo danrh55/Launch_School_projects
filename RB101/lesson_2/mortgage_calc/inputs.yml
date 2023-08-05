@@ -1,0 +1,9 @@
+:input_types:
+  :principal: 
+  :apr: 
+  :loan_duration_years: 
+
+:input_prompts:
+  - loan amount (e.g. 10000 for $10,000.00)
+  - annual APR (in % form, e.g. 5 for 5%)
+  - loan duration (in years, e.g. 10 for 10 years)
