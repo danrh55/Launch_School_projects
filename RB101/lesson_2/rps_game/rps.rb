@@ -1,37 +1,45 @@
-require 'pry'
-
 # method definitions
+def prompt(str)
+  puts "=> {str}\n"
+
 def welcome_message
-  puts "Welcome, #{NAME}! Let's play rock, paper, scissors, lizard, spock!"
+  prompt("Welcome, #{NAME}! Let's play rock, paper, scissors, lizard, spock!")
 end
 
 def grab_name
   loop do
-    puts 'Please enter your name'
+    prompt('Please enter your name')
     name = gets.chomp.strip.capitalize
     if name == ''
-      puts 'You forgot to enter a name.'
+      prompt('You forgot to enter a name.')
     else
       return name
     end
   end
 end
 
+def grab_choices
+  choices_string = ''
+  INPUT_TYPES.each do |_key, choice_variations|
+    choices_string += choice_variations.join(' or ') + "\n"
+  end
+  choices_string
+end
+
 def grab_user_choice
   loop do
-    puts <<~CHOICE_PROMPT
-            Please enter your choice:
-            - rock or r
-            - paper or p
-            - scissors or sc
-            - lizard or l
-            - spock or sp
-          CHOICE_PROMPT
+    prompt(<<~CHOICE_PROMPT
+    Please enter your choice:
+    #{grab_choices}
+    CHOICE_PROMPT
+          )
     user_choice = gets.chomp.strip.downcase
     if choice_valid?(user_choice)
       return grab_full_choice_name(user_choice)
+    elsif user_choice == ''
+      prompt("You did not enter anything!")
     else
-      puts 'invalid input'
+      prompt('invalid input')
     end
   end
 end
@@ -45,9 +53,6 @@ def grab_full_choice_name(user_choice)
 end
 
 def choice_valid?(user_choice)
-  if user_choice == ''
-    print "You did not enter anything! It's an "
-  end
   INPUT_TYPES.each do |_key, values|
     return true if values.include?(user_choice)
   end
@@ -78,44 +83,64 @@ def track_wins(user_win_result, num_user_wins, num_computer_wins)
   return num_user_wins, num_computer_wins
 end
 
-def output_round_results(user_win_result, user_choice, computer_choice)
-  if user_win_result == 'yes'
-    puts "#{user_choice} beats #{computer_choice}. #{NAME}, you win this round."
-  elsif user_win_result == 'draw'
-    puts "I chose #{computer_choice} also, so it's a draw. Redo the round."
+def output_round_result(result, user_choice, computer_choice)
+  if result == 'yes'
+    prompt("#{user_choice} beats #{computer_choice}. #{NAME}, you win this round.")
+  elsif result == 'draw'
+    prompt("I chose #{computer_choice} also, so it's a draw. Redo the round.")
   else
-    puts <<~USER_LOST_MSG
+    prompt(<<~USER_LOST_MSG
     #{user_choice} loses to #{computer_choice}.
     #{NAME}, you lost this round. Lol"
     USER_LOST_MSG
+          )
   end
 end
 
 def output_grand_winner(num_user_wins, num_computer_wins)
   if num_user_wins > num_computer_wins
-    puts "#{NAME}, you are the grand winner :{"
+    prompt("#{NAME}, you are the grand winner :{")
   else
-    puts 'Sorry it looks like I\'m the grand winner. Too bad :)'
+    prompt('Sorry it looks like I\'m the grand winner. Too bad :)')
   end
 end
 
 def play_again?
   loop do
-    puts 'Do you want to play again?'
+    prompt('Do you want to play again?')
     answer = gets.chomp.strip.downcase
     if ['yes', 'y'].include?(answer)
+      prompt("Let's go again! Yay.")
       return true
     elsif ['no', 'n'].include?(answer)
+      prompt("See you later ~")
       return false
     else
-      puts "That's an invalid answer."
+      prompt("That's an invalid answer.")
     end
   end
 end
 
 def output_total_wins(num_user_wins, num_computer_wins)
-  puts "#{NAME}, you have #{num_user_wins} wins."
-  puts "I have #{num_computer_wins} wins"
+  prompt("#{NAME}, you have #{num_user_wins} wins.")
+  prompt("I have #{num_computer_wins} wins")
+end
+
+def play_game
+  num_user_wins = 0
+  num_computer_wins = 0
+
+  while (num_user_wins < 2) && (num_computer_wins < 2)
+    user_choice = grab_user_choice
+    computer_choice = grab_computer_choice
+    result = user_win_result(user_choice, computer_choice)
+    output_round_result(result, user_choice, computer_choice)
+    num_user_wins, num_computer_wins = track_wins(result,
+                                                  num_user_wins,
+                                                  num_computer_wins)
+    output_total_wins(num_user_wins, num_computer_wins)
+  end
+  return num_user_wins, num_computer_wins
 end
 
 # main
@@ -135,26 +160,7 @@ NAME = grab_name
 welcome_message
 
 loop do
-  num_user_wins = 0
-  num_computer_wins = 0
-
-  while (num_user_wins < 2) && (num_computer_wins < 2)
-    user_choice = grab_user_choice
-    computer_choice = grab_computer_choice
-    result = user_win_result(user_choice, computer_choice)
-    output_round_results(result, user_choice, computer_choice)
-    num_user_wins, num_computer_wins = track_wins(result,
-                                                  num_user_wins,
-                                                  num_computer_wins)
-    output_total_wins(num_user_wins, num_computer_wins)
-  end
-
+  num_user_wins, num_computer_wins = play_game
   output_grand_winner(num_user_wins, num_computer_wins)
-
-  if play_again?
-    puts "Let's go again! Yay."
-  else
-    puts "See you later ~"
-    break
-  end
+  break unless play_again? end
 end
