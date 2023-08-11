@@ -1,9 +1,10 @@
 # method definitions
 def prompt(str)
-  puts "=> {str}\n"
+  puts "=> #{str}\n"
+end
 
 def welcome_message
-  prompt("Welcome, #{NAME}! Let's play rock, paper, scissors, lizard, spock!")
+  prompt("Welcome, #{NAME}! Let's play rock, paper, scissors, lizard, spock!\n")
 end
 
 def grab_name
@@ -11,7 +12,7 @@ def grab_name
     prompt('Please enter your name')
     name = gets.chomp.strip.capitalize
     if name == ''
-      prompt('You forgot to enter a name.')
+      prompt("You forgot to enter a name.\n")
     else
       return name
     end
@@ -21,23 +22,23 @@ end
 def grab_choices
   choices_string = ''
   INPUT_TYPES.each do |_key, choice_variations|
-    choices_string += choice_variations.join(' or ') + "\n"
+    choices_string += "- #{choice_variations.join(' or ')}\n"
   end
   choices_string
 end
 
 def grab_user_choice
   loop do
-    prompt(<<~CHOICE_PROMPT
+    puts <<~CHOICE_PROMPT
     Please enter your choice:
     #{grab_choices}
+    Your choice:  
     CHOICE_PROMPT
-          )
     user_choice = gets.chomp.strip.downcase
     if choice_valid?(user_choice)
       return grab_full_choice_name(user_choice)
     elsif user_choice == ''
-      prompt("You did not enter anything!")
+      prompt("You did not enter anything!\n")
     else
       prompt('invalid input')
     end
@@ -85,14 +86,17 @@ end
 
 def output_round_result(result, user_choice, computer_choice)
   if result == 'yes'
-    prompt("#{user_choice} beats #{computer_choice}. #{NAME}, you win this round.")
+    prompt(<<~OUTPUT
+    #{user_choice} beats #{computer_choice}. #{NAME}, you win this round."
+    OUTPUT
+          )
   elsif result == 'draw'
     prompt("I chose #{computer_choice} also, so it's a draw. Redo the round.")
   else
-    prompt(<<~USER_LOST_MSG
+    prompt(<<~OUTPUT
     #{user_choice} loses to #{computer_choice}.
     #{NAME}, you lost this round. Lol"
-    USER_LOST_MSG
+    OUTPUT
           )
   end
 end
@@ -123,7 +127,7 @@ end
 
 def output_total_wins(num_user_wins, num_computer_wins)
   prompt("#{NAME}, you have #{num_user_wins} wins.")
-  prompt("I have #{num_computer_wins} wins")
+  prompt("I have #{num_computer_wins} wins\n")
 end
 
 def play_game
@@ -155,6 +159,7 @@ LOSES_AGAINST = { rock: ['paper', 'spock'],
                   scissors: ['rock', 'spock'],
                   lizard: ['rock', 'scissors'],
                   spock: ['lizard', 'paper'] }
+
 NAME = grab_name
 
 welcome_message
@@ -162,5 +167,5 @@ welcome_message
 loop do
   num_user_wins, num_computer_wins = play_game
   output_grand_winner(num_user_wins, num_computer_wins)
-  break unless play_again? end
+  break unless play_again?
 end
