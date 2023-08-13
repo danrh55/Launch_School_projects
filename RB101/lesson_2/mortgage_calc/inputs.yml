@@ -1,9 +1,11 @@
-:input_types:
-  :principal: 
-  :apr: 
-  :loan_duration_years: 
+welcome: Welcome to the mortgage calculator. What's your name?
+invalid_input: You entered an invalid input!
+empty_input: You didn't enter anything!
+calc_again:  Do you want to do another calculation? (y/n)
+go_again: Let's go again!
+exit: See you later
 
-:input_prompts:
-  - loan amount (e.g. 10000 for $10,000.00)
-  - annual APR (in % form, e.g. 5 for 5%)
-  - loan duration (in years, e.g. 10 for 10 years)
+# input prompts
+principal: Please enter in the loan amount (e.g. 10000 for $10,000.00)
+apr: Please enter in your annual APR in % form (e.g. 5 for 5%)
+loan_duration_years: Please enter in your loan duration in years (e.g. 10 for 10 years)
