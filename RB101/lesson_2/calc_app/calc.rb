@@ -1,67 +1,54 @@
 require 'yaml'
 
 MESSAGE = YAML.load_file('message.yml')
+OPERATIONS = { 'addition' =>
+               { input_variations: %w(1 add addition), symbol: '+' },
+               'subtraction' =>
+               { input_variations: %w(2 minus subtract subtraction), symbol: '-' },
+               'multiplication' =>
+               { input_variations: %w(3 multiply multiplication), symbol: '*' },
+               'division' =>
+               { input_variations: %w(4 divide division), symbol: '/' } }
 
 def prompt(str)
   puts "=> #{str}"
 end
 
-def welcome_msg
-  prompt(MESSAGE['welcome_message'])
+def display_msg(msg)
+  prompt(MESSAGE[msg])
+end
+
+def clean_user_input(user_input)
+  user_input.chomp.strip
+end
+
+def grab_name
   loop do
-    name = gets.chomp.strip
+    name = clean_user_input(gets)
     if name == ''
-      prompt(MESSAGE['invalid_input'])
+      display_msg('empty_input')
     else
-      prompt("Welcome #{name.capitalize}!")
-      break
+      return name.capitalize
     end
   end
 end
 
-def grab_numbers
-  input_index = 0
-  inputs = []
-  # use recursions instead.
+def display_welcome_msg
+  display_msg('welcome')
+  prompt("Welcome #{grab_name}!")
+end
+
+def grab_number(msg)
   loop do
-    prompt(MESSAGE['input_messages'][input_index])
-    input = gets.chomp.strip
-    if number?(input) == true
-      inputs.push(input.to_f)
-      input_index += 1
-      return inputs if inputs.length == 2
+    display_msg(msg)
+    num = clean_user_input(gets)
+    if number?(num)
+      return num.to_f
+    elsif num == ''
+      display_msg('empty_input')
     else
-      prompt(MESSAGE['invalid_input'])
+      display_msg('invalid_input')
     end
-  end
-end
-
-def grab_operation(inputs)
-  prompt(MESSAGE['input_messages'][2])
-  operation = gets.chomp.strip.downcase
-  if MESSAGE['operation_variations'].flatten(-1).include?(operation)
-    MESSAGE['operation_variations'].each do |op, operation_variations|
-      if operation_variations.include?(operation)
-        return check_operation(inputs, op)
-      end
-    end
-  else
-    prompt(MESSAGE['invalid_input'])
-    grab_operation(inputs)
-  end
-end
-
-def check_operation(inputs, op)
-  if inputs[1] == 0 && op == 'division'
-    loop do
-      prompt(MESSAGE['divide_by_zero_msg'])
-      inputs = grab_numbers
-      if inputs[1] != 0
-        return inputs.push(op.to_s)
-      end
-    end
-  else
-    inputs.push(op.to_s)
   end
 end
 
@@ -69,52 +56,78 @@ def number?(num)
   (num.to_f.to_s == num) || (num.to_i.to_s == num)
 end
 
-def calculate(inputs)
-  case inputs[2]
-  when 'addition'
-    inputs[0] + inputs[1]
-  when 'subtraction'
-    inputs[0] - inputs[1]
-  when 'multiplication'
-    inputs[0] * inputs[1]
-  when 'division'
-    inputs[0] / inputs[1]
+def grab_operation(msg)
+  loop do
+    display_msg(msg)
+    input_op = clean_user_input(gets).downcase
+    OPERATIONS.each do |operation_type, variations|
+      return operation_type if variations[:input_variations].include?(input_op)
+    end
+    display_msg('invalid_input')
   end
 end
 
-def output_statement(inputs, output)
-  prompt("#{inputs[0]} #{MESSAGE['operation_symbols'][inputs[2]]} #{inputs[1]} calculates to: #{output}")
+def divide_by_zero?(num2, op)
+  num2 == 0 && op == 'division'
+end
+
+def calculate(num1, num2, op)
+  case op
+  when 'addition'
+    num1 + num2
+  when 'subtraction'
+    num1 - num2
+  when 'multiplication'
+    num1 * num2
+  when 'division'
+    num1 / num2
+  end
+end
+
+def display_calc(num1, num2, op, output)
+  prompt(<<~OUTPUT
+         #{num1} #{grab_operation_symbol(op)} #{num2}
+         calculates to: #{output.round(2)}
+         OUTPUT
+        )
+end
+
+def grab_operation_symbol(op)
+  OPERATIONS.each do |operation_type, variations|
+    return variations[:symbol] if operation_type == op
+  end
 end
 
 def calc_again?
-  prompt(MESSAGE['calc_again?'])
-  go_again_answer = gets.chomp.downcase
-  if MESSAGE['valid_answers'].include?(go_again_answer)
-    if go_again_answer == 'n' || go_again_answer == 'no'
-      prompt(MESSAGE['thank_you_msg'])
+  loop do
+    display_msg('another_calc')
+    go_again_answer = clean_user_input(gets).downcase
+
+    if ['yes', 'y'].include?(go_again_answer)
+      return true
+    elsif ['no', 'n'].include?(go_again_answer)
+      return false
     else
-      prompt('Let\'s go again')
-      run_calc
+      display_msg('invalid_input')
     end
-  else
-    prompt(MESSAGE['invalid_input'])
-    calc_again?
   end
 end
 
-def valid_answer?(ans)
-  MESSAGE['valid_answers'].include?(ans)
-end
-
-def run_calc
-  inputs = grab_operation(grab_numbers())
-  # binding.pry
-  output = calculate(inputs).round(2)
-  output_statement(inputs, output)
-  calc_again?
-end
-
 # start of main
-welcome_msg
+display_welcome_msg
 
-run_calc
+loop do
+  num1 = grab_number('first_num')
+  num2 = grab_number('second_num')
+  op = grab_operation('operation')
+
+  if divide_by_zero?(num2, op)
+    display_msg('zero_division')
+    next
+  else
+    output = calculate(num1, num2, op)
+    display_calc(num1, num2, op, output)
+  end
+
+  break unless calc_again?
+end
