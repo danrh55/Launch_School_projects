@@ -1,10 +1,24 @@
+INPUT_TYPES = { rock: ['rock', 'r'],
+  paper: ['paper', 'p'],
+  scissors: ['scissors', 'sc'],
+  lizard: ['lizard', 'l'],
+  spock: ['spock', 'sp'] }
+
+LOSES_AGAINST = { rock: ['paper', 'spock'],
+    paper: ['scissors', 'lizard'],
+    scissors: ['rock', 'spock'],
+    lizard: ['rock', 'scissors'],
+    spock: ['lizard', 'paper'] }
+
+# score board and clear screen as it is messy
+
 # method definitions
 def prompt(str)
   puts "=> #{str}\n"
 end
 
 def welcome_message
-  prompt("Welcome, #{NAME}! Let's play rock, paper, scissors, lizard, spock!\n")
+  prompt("Welcome, #{name}! Let's play rock, paper, scissors, lizard, spock!\n")
 end
 
 def grab_name
@@ -29,11 +43,12 @@ end
 
 def grab_user_choice
   loop do
-    puts <<~CHOICE_PROMPT
-    Please enter your choice:
-    #{grab_choices}
-    Your choice:  
-    CHOICE_PROMPT
+    prompt(<<~CHOICE_PROMPT
+           Please enter your choice:
+           #{grab_choices}
+           Your choice:  
+           CHOICE_PROMPT
+          )
     user_choice = gets.chomp.strip.downcase
     if choice_valid?(user_choice)
       return grab_full_choice_name(user_choice)
@@ -87,7 +102,7 @@ end
 def output_round_result(result, user_choice, computer_choice)
   if result == 'yes'
     prompt(<<~OUTPUT
-    #{user_choice} beats #{computer_choice}. #{NAME}, you win this round."
+    #{user_choice} beats #{computer_choice}. #{name}, you win this round."
     OUTPUT
           )
   elsif result == 'draw'
@@ -95,7 +110,7 @@ def output_round_result(result, user_choice, computer_choice)
   else
     prompt(<<~OUTPUT
     #{user_choice} loses to #{computer_choice}.
-    #{NAME}, you lost this round. Lol"
+    #{name}, you lost this round. Lol"
     OUTPUT
           )
   end
@@ -103,7 +118,7 @@ end
 
 def output_grand_winner(num_user_wins, num_computer_wins)
   if num_user_wins > num_computer_wins
-    prompt("#{NAME}, you are the grand winner :{")
+    prompt("#{name}, you are the grand winner :{")
   else
     prompt('Sorry it looks like I\'m the grand winner. Too bad :)')
   end
@@ -126,7 +141,7 @@ def play_again?
 end
 
 def output_total_wins(num_user_wins, num_computer_wins)
-  prompt("#{NAME}, you have #{num_user_wins} wins.")
+  prompt("#{name}, you have #{num_user_wins} wins.")
   prompt("I have #{num_computer_wins} wins\n")
 end
 
@@ -148,19 +163,7 @@ def play_game
 end
 
 # main
-INPUT_TYPES = { rock: ['rock', 'r'],
-                paper: ['paper', 'p'],
-                scissors: ['scissors', 'sc'],
-                lizard: ['lizard', 'l'],
-                spock: ['spock', 'sp'] }
-
-LOSES_AGAINST = { rock: ['paper', 'spock'],
-                  paper: ['scissors', 'lizard'],
-                  scissors: ['rock', 'spock'],
-                  lizard: ['rock', 'scissors'],
-                  spock: ['lizard', 'paper'] }
-
-NAME = grab_name
+name = grab_name
 
 welcome_message
 
