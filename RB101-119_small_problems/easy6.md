@@ -471,7 +471,7 @@ def include?(arr, search_val)
   false
 end
 ```
-Mutation
+***Mutation***
 What will the following code print, and why? Don't run the code until you have tried to answer.
 
 ```ruby

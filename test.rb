@@ -1,19 +1,16 @@
-munsters = {
-  "Herman" => { "age" => 32, "gender" => "male" },
-  "Lily" => { "age" => 30, "gender" => "female" },
-  "Grandpa" => { "age" => 402, "gender" => "male" },
-  "Eddie" => { "age" => 10, "gender" => "male" },
-  "Marilyn" => { "age" => 23, "gender" => "female"}
-}
-
-munsters.each_pair do |_name, info|
-  if info['age'] >= 65
-    info['age_group'] = 'senior'
-  elsif (info['age'] <= 64 && info['age'] >= 18)
-    info['age_group'] = 'adult'
-  else
-    info['age_group'] = 'kid'
+def count_occurrences(arr)
+  arr.each_with_object({}) do |element, hash|
+    if hash.key?(element)
+      hash[element] += 1
+    else
+      hash[element] = 1
+    end
   end
 end
 
-p munsters
+vehicles = [
+  'car', 'car', 'truck', 'car', 'SUV', 'truck',
+  'motorcycle', 'motorcycle', 'car', 'truck'
+]
+
+puts count_occurrences(vehicles)
