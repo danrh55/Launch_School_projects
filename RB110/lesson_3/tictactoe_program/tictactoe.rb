@@ -198,7 +198,6 @@ loop do
       current_player = alternate_player(current_player, user_name)
     end
     puts 'Next round!'
-    current_player = alternate_player(current_player, user_name)
     puts "You have #{user_win_count} wins."
     puts "While the computer has #{computer_win_count} wins."
 
