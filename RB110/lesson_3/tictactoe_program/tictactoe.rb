@@ -163,6 +163,8 @@ puts 'Let\'s play tic, tac, toe!'
 puts 'What\'s your name?'
 user_name = gets.chomp.capitalize
 
+puts 'Let\'s start playing. The first player to 5 wins, wins the battle.'
+
 loop do
   computer_win_count = 0
   user_win_count = 0
@@ -202,9 +204,9 @@ loop do
     puts "While the computer has #{computer_win_count} wins."
 
     if computer_win_count == 5
-      puts 'Computer has won 5 rounds first!'
+      puts 'Computer has won the battle!'
     elsif user_win_count == 5
-      puts "#{user_name} has won 5 rounds first!"
+      puts "#{user_name} has won the battle!"
     end
   end
   break unless play_again?
