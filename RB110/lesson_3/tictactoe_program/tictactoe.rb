@@ -183,10 +183,7 @@ loop do
       puts "The result is:"
       display_board(board_arr)
 
-      if board_full?(board_arr)
-        puts 'It\'s a draw this round.'
-        break
-      elsif game_won?(board_arr)
+      if game_won?(board_arr)
         # last player to pick won the game.
         puts "#{current_player} won this round."
         case current_player
@@ -196,12 +193,18 @@ loop do
           user_win_count += 1
         end
         break
+      elsif board_full?(board_arr)
+        puts 'It\'s a draw this round.'
+        break
       end
       current_player = alternate_player(current_player, user_name)
     end
-    puts 'Next round!'
+    puts ''
     puts "You have #{user_win_count} wins."
     puts "While the computer has #{computer_win_count} wins."
+    puts ''
+    puts 'Next round!'
+    puts ''
 
     if computer_win_count == 5
       puts 'Computer has won the battle!'
