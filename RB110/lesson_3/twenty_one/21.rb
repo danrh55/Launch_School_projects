@@ -169,7 +169,7 @@ def grab_player_result(player, player_sum, player_status)
   return '' if TABLE[player][0] =~ /Spot: \d/
   dealer_status = TABLE[-1][2]
   dealer_sum = sum_hand(TABLE[-1][1])
-  
+
 
   if player_status == 'bust'
     dealer_status == 'bust' ? 'tie' : 'lost'
