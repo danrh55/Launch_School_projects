@@ -7,6 +7,8 @@ DECK = []
 NUM_DECKS = 8
 RESHUFFLE_NUM = 5
 NUM_SPOTS = 5
+DEALER_LIMIT = 17
+GAME_NUM = 21
 
 # methods
 def display_greeting
@@ -38,13 +40,13 @@ def initalize_table!(round_counter)
 end
 
 def insert_players!
-  TABLE.each_with_index do |player, player_index|
-    next if player[0] == "Dealer: #{DEALER_NAME}"
+  TABLE.each_with_index do |player_info, player_index|
+    next if player_info[0] == "Dealer: #{DEALER_NAME}"
     name = grab_name(player_index + 1)
     if name == 'Stop'
       break
     else
-      player[0] = name
+      player_info[0] = name
     end
     puts "\nThat's the limit folks!" if player_index + 1 == NUM_SPOTS
   end
@@ -67,16 +69,16 @@ def grab_name(player_num)
 end
 
 def reset_table!
-  TABLE.each do |player|
-    player[1].clear
-    player[2] = nil
+  TABLE.each do |player_info|
+    player_info[1].clear
+    player_info[2] = nil
   end
 end
 
 def deal_hands!
   2.times do |_|
-    TABLE.each do |player|
-      player[1].push(hit_me!) unless player[0] =~ /Spot: \d/
+    TABLE.each do |player_info|
+      player_info[1].push(hit_me!) unless player_info[0] =~ /Spot: \d/
     end
   end
 end
@@ -104,7 +106,7 @@ end
 
 def decision(player)
   if player == "Dealer: #{DEALER_NAME}"
-    sum_hand(TABLE[-1][1]) < 17 ? 'hit' : 'stay'
+    sum_hand(TABLE[-1][1]) < DEALER_LIMIT ? 'hit' : 'stay'
   else
     loop do
       puts "\n#{player}, what's your call (hit or stay)?"
@@ -119,7 +121,7 @@ def status(hand, decision)
   sum = sum_hand(hand)
 
   if decision == 'hit'
-    sum > 21 ? 'bust' : 'hit'
+    sum > GAME_NUM ? 'bust' : 'hit'
   else
     'stay'
   end
@@ -142,14 +144,14 @@ def combine_strings(values, box_size)
 end
 
 def names_arr
-  TABLE.each_with_object([]) do |player, arr|
-    arr.push(player[0]) unless player[0] == "Dealer: #{DEALER_NAME}"
+  TABLE.each_with_object([]) do |player_info, arr|
+    arr.push(player_info[0]) unless player_info[0] == "Dealer: #{DEALER_NAME}"
   end
 end
 
 def hands_arr
-  TABLE.each_with_object([]) do |player, arr|
-    arr.push(player[1]) unless player[0] == "Dealer: #{DEALER_NAME}"
+  TABLE.each_with_object([]) do |player_info, arr|
+    arr.push(player_info[1]) unless player_info[0] == "Dealer: #{DEALER_NAME}"
   end
 end
 
@@ -159,14 +161,14 @@ def display_players_hands(box_size)
 end
 
 def display_results(box_size)
-  results = TABLE[0..-2].map.with_index do |player_info, player|
-    grab_player_result(player, sum_hand(player_info[1]), player_info[2])
+  results = TABLE[0..-2].map.with_index do |player_info, player_index|
+    grab_player_result(player_index, sum_hand(player_info[1]), player_info[2])
   end
   puts combine_strings(results, box_size)
 end
 
-def grab_player_result(player, player_sum, player_status)
-  return '' if TABLE[player][0] =~ /Spot: \d/
+def grab_player_result(player_index, player_sum, player_status)
+  return '' if TABLE[player_index][0] =~ /Spot: \d/
   dealer_status = TABLE[-1][2]
   dealer_sum = sum_hand(TABLE[-1][1])
 
@@ -183,18 +185,18 @@ def grab_player_result(player, player_sum, player_status)
 end
 
 def display_player_status(box_size)
-  statuses = TABLE[0..-2].map do |player|
-    player[2] == 'bust' ? 'bust' : ''
+  statuses = TABLE[0..-2].map do |player_info|
+    player_info[2] == 'bust' ? 'bust' : ''
   end
   puts combine_strings(statuses, box_size)
 end
 
 def longest_length
   longest = 0
-  TABLE.each do |player|
-    next if player[0] == "Dealer: #{DEALER_NAME}"
-    name_length = player[0].length
-    hand_length = player[1].to_s.length
+  TABLE.each do |player_info|
+    next if player_info[0] == "Dealer: #{DEALER_NAME}"
+    name_length = player_info[0].length
+    hand_length = player_info[1].to_s.length
     length = [name_length, hand_length].max
     longest = length if length > longest
   end
@@ -202,21 +204,17 @@ def longest_length
 end
 
 def player_hands
-  TABLE.each_with_object([]) do |player, arr|
-    arr.push(player[1]) unless player[0] == "Dealer: #{DEALER_NAME}"
+  TABLE.each_with_object([]) do |player_info, arr|
+    arr.push(player_info[1]) unless player_info[0] == "Dealer: #{DEALER_NAME}"
   end
 end
 
 def no_more_hits?
-  TABLE.each do |player|
-    return false if player[2] == 'hit'
+  TABLE.each do |player_info|
+    return false if player_info[2] == 'hit'
   end
   true
 end
-
-# def sum_hand(hand)
-#   interpret_hand(hand).sum
-# end
 
 def sum_hand(hand)
   temp_ace_value = 11
@@ -240,21 +238,21 @@ end
 def convert_ace_values(interim_hand)
   r_interim_hand = interim_hand.reverse
   loop do
-    if interim_hand.sum > 21
+    if interim_hand.sum > GAME_NUM
       if r_interim_hand.index(11).nil?
         break
       else
         r_interim_hand[r_interim_hand.index(11)] = 1
       end
     end
-    break if r_interim_hand.sum < 21
+    break if r_interim_hand.sum < GAME_NUM
   end
   r_interim_hand.reverse
 end
 
 def player_statuses
-  TABLE.map do |player|
-    player[2]
+  TABLE.map do |player_info|
+    player_info[2]
   end
 end
 
@@ -284,21 +282,22 @@ display_greeting
 initialize_spots!
 shuffle_deck!
 initalize_table!(round_counter)
-sleep(1)
+sleep(0.5)
 system 'clear'
 
 loop do
   deal_hands!
 
   loop do
-    TABLE.each do |player|
-      next if %w(stay bust).include?(player[2]) || player[0] =~ /Spot: \d/
+    TABLE.each do |player_info|
+      next if %w(stay
+                 bust).include?(player_info[2]) || player_info[0] =~ /Spot: \d/
       display_table('hidden')
-      decision = decision(player[0])
+      decision = decision(player_info[0])
       # updates player hand
-      player[1] << hit_me! if decision == 'hit'
+      player_info[1] << hit_me! if decision == 'hit'
       # updates player status
-      player[2] = status(player[1], decision)
+      player_info[2] = status(player_info[1], decision)
       system 'clear'
     end
     break if no_more_hits?
