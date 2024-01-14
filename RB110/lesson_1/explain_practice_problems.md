@@ -7,7 +7,7 @@ What is the return value of the select method below? Why?
   'hi'
 end
 ```
-The return value of the above code is the array `[1, 2, 3]`. This is because the select method considers the return value of the block. The last line evaluated in the block is the string `'hi'` which has a truthy value. When the return value of the block in that iteration is truthy, the value passed to the block as an argument will be selected. That's why every element in the original array is included in the array returned by the `select` method call. 
+<!-- The return value of the above code is the array `[1, 2, 3]`. This is because the select method considers the return value of the block. The last line evaluated in the block is the string `'hi'` which has a truthy value. When the return value of the block in that iteration is truthy, the value passed to the block as an argument will be selected. That's why every element in the original array is included in the array returned by the `select` method call.  -->
 
 Practice Problem 2
 How does count treat the block's return value? How can we find out?
