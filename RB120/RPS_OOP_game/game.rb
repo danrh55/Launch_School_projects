@@ -1,19 +1,16 @@
 require './player'
 
 class RPSGame
-  attr_reader :human, :computer, :total_rounds, :tied_hand
-  attr_accessor :round
-
   def initialize
     @human = Human.new
     @computer = Computer.new
-    @round = 1
+    @current_round = 1
   end
 
   def play
     set_num_rounds
 
-    total_rounds.times do
+    num_rounds.times do
       # Repeat if its a tie.
       loop do
         pick_hands
@@ -26,7 +23,7 @@ class RPSGame
   end
 
   def play_again?
-    sleep 3
+    sleep 2
     system 'clear'
     answer = ''
 
@@ -44,12 +41,15 @@ class RPSGame
   end
 
   def reset
-    self.round = 1
+    self.current_round = 1
     human.reset
     computer.reset
   end
 
   private
+
+  attr_reader :human, :computer, :num_rounds
+  attr_accessor :current_round
 
   def process_winner(winner)
     display_result(winner)
@@ -64,7 +64,7 @@ class RPSGame
       answer = gets.chomp
       break if valid_num_rounds?(answer)
     end
-    @total_rounds = answer.to_i
+    @num_rounds = answer.to_i
     system 'clear'
   end
 
@@ -81,12 +81,12 @@ class RPSGame
   end
 
   def pick_hands
-    sleep 1 unless round == 1
+    sleep 1 unless current_round == 1
     system 'clear'
-    puts "Round: #{round}"
+    puts "Round: #{current_round}"
     human.pick
     computer.pick
-    self.round += 1
+    self.current_round += 1
   end
 
   def determine_winner
