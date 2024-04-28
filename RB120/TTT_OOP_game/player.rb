@@ -14,10 +14,14 @@ class Player
 
   def mark(board)
     choice = choose_spot(board)
-    puts "=> #{name} chose spot #{choice}."
+    display_spot_choice(choice)
     idx = choice - 1
     board.spots[idx] = mark_sym
     display_clear
+  end
+
+  def display_spot_choice(choice)
+    puts "=> #{name} chose spot #{choice}."
   end
 end
 
