@@ -10,7 +10,7 @@ class Round
       display_clear
       puts "Round: #{round}\n\n"
       current_player.mark(board)
-      update_winner(current_player)
+      update_status(current_player)
       current_player = switch(current_player)
       break unless round_winner.nil?
     end
@@ -42,7 +42,7 @@ class Round
     current_player == human ? computer : human
   end
 
-  def update_winner(current_player)
+  def update_status(current_player)
     if winner?
       @round_winner = current_player.name
       current_player.points += 1
